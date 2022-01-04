@@ -112,16 +112,16 @@ const createRecord = async function (formValues: { input: RecordInput }) {
       title: '成功建立資料！'
     })
     // line msg
-    const input = {
-      to: [process.env.VUE_APP_JIANMIAU_USERID, process.env.VUE_APP_KAROL_USERID],
-      messages: [
-        {
-          type: 'text',
-          text: `${store.currentUser}新增了一筆關於${formValues.input.item}的記帳`
-        }
-      ]
-    }
-    await recordAPI.pushLineMsg(input)
+    // const input = {
+    //   to: [process.env.VUE_APP_JIANMIAU_USERID, process.env.VUE_APP_KAROL_USERID],
+    //   messages: [
+    //     {
+    //       type: 'text',
+    //       text: `${store.currentUser}新增了一筆關於${formValues.input.item}的記帳`
+    //     }
+    //   ]
+    // }
+    // await recordAPI.pushLineMsg(input)
   } catch (error) {
     console.error('error', error)
     Toast.fire({
