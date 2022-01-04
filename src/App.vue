@@ -1,30 +1,82 @@
+<script setup lang="ts">
+import Navbar from './components/Navbar.vue'
+// import { useStore } from './store/index'
+// const store = useStore()
+// const getRecords = store.fetchRecords
+// getRecords()
+</script>
+
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div>
+    <Navbar>
+      <template #main>
+        <router-view v-slot="{ Component }">
+          <transition name="fade-fast" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
+      </template>
+    </Navbar>
   </div>
-  <router-view/>
 </template>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap');
+
+body {
+  background-image: url('https://png.pngtree.com/thumb_back/fh260/background/20190222/ourmid/pngtree-minimalistic-cat-claws-seamless-background-design-backgroundpinkcat-clawseamless-backgroundbanner-image_57663.jpg');
+}
+
+/* .is-primary {
+  color: hsl(150, 50%, 50%);
+} */
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  font-family: 'Zen Maru Gothic', sans-serif;
 }
 
-#nav {
-  padding: 30px;
+/* transition */
+.slide-x-enter-active {
+  transition: transform 0.3s ease-out;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.slide-x-leave-active {
+  transition: transform 0.2s ease-in;
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+.slide-x-enter-from {
+  transform: translateX(-100%);
+}
+.slide-x-enter-to {
+  transform: translateX(0);
+}
+
+.slide-x-leave-from {
+  transform: translateX(0);
+}
+.slide-x-leave-to {
+  transform: translateX(-100%);
+}
+
+.fade-fast-enter-active,
+.fade-fast-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-fast-enter-from,
+.fade-fast-leave-to {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-fast-enter-active,
+  .fade-fast-leave-active {
+    transition: none;
+  }
 }
 </style>
