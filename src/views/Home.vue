@@ -16,6 +16,33 @@ const records = ref<Record[]>([])
 const thisMonthData = ref<MonthData>(new MonthData())
 const lastMonthData = ref<MonthData>(new MonthData())
 
+// cocos settings
+/** 外部帶進來的param */
+let URLscheme: any = []
+const onLoad = async function () {
+  let url = window.location.search
+  if (url.indexOf('?') !== -1) {
+    let str: string = url.substr(1)
+    let strs: any[] = str.split('&')
+    for (let i = 0; i < strs.length; i++) {
+      URLscheme[strs[i].split('=')[0]] = unescape(strs[i].split('=')[1])
+    }
+  }
+  CallParent('_alert', '我愛豬涵')
+}
+const CallParent = async function (method: string, ...param: any[]) {
+  let target: string = URLscheme['host']
+  if (target) {
+    window.parent.postMessage(
+      {
+        method: method,
+        value: param
+      },
+      target
+    )
+  }
+}
+
 // methods
 const fetchRecords = async function () {
   try {
@@ -30,6 +57,8 @@ const fetchRecords = async function () {
       nowMonth - 1 === 0 ? 12 : nowMonth - 1
     )
     isLoading.value = false
+    // cocos settings
+    CallParent('_closeBG')
   } catch (error) {
     console.error('error', error)
   }
@@ -61,24 +90,13 @@ const calculateMonthData = (year: number, month: number) => {
   }
 }
 
-// test
-// const btnClick = async function () {
-//   try {
-//     const input = { message: 'HELLO', userId: 'Ub3557f7c812e4e78293959fe4fccd414' }
-//     const { data } = await lineBotAPI.pushMsg(input)
-//     console.log('data', data)
-//   } catch (error) {
-//     console.error('error', error)
-//   }
-// }
-
+// created
 fetchRecords()
+onLoad()
 </script>
 
 <template>
   <div v-if="!isLoading">
-    <!-- <button class="btn btn-info" @click="btnClick">Message</button> -->
-
     <div class="list-group list-group-checkable">
       <label class="list-group-item py-3 mb-3">
         <div class="row">
