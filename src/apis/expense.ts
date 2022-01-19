@@ -1,27 +1,34 @@
 import { apiHelper } from './helper'
-import { RecordInput } from '../models/Record'
-import { MessageInput } from '../models/LineBot'
+import { ExpenseInput } from '../models/Expense'
+import { CategoryInput } from '../models/Category'
 
 export default {
-  getAll() {
-    return apiHelper.get('/record/all')
+  expense: {
+    getAll() {
+      return apiHelper.get('/expense/all')
+    },
+    getOne(id: number) {
+      return apiHelper.get(`/expense/${id}`)
+    },
+    create(data: ExpenseInput) {
+      return apiHelper.post('/expense/create', data)
+    }
   },
-  getOne(id: number) {
-    return apiHelper.get(`/record/${id}`)
-  },
-  create(data: RecordInput) {
-    return apiHelper.post('/record/create', data)
-  },
-  edit(id: number, data: RecordInput) {
-    return apiHelper.put(`/record/edit/${id}`, data)
-  },
-  close(data: { records: string; totalAmount: number; recorder: string }) {
-    return apiHelper.put('/close', data)
-  },
-  getLogs() {
-    return apiHelper.get('/log/all')
-  },
-  pushLineMsg(data: { to: string[]; messages: MessageInput[] }) {
-    return apiHelper.post('/lineBot/push', data)
+  category: {
+    getAll() {
+      return apiHelper.get('/category/all')
+    },
+    getOne(id: number) {
+      return apiHelper.get(`/category/${id}`)
+    },
+    create(data: CategoryInput) {
+      return apiHelper.post('/category/create', data)
+    },
+    edit(id: number, data: CategoryInput) {
+      return apiHelper.put(`/category/edit/${id}`, data)
+    },
+    delete(id: number) {
+      return apiHelper.delete(`/category/delete/${id}`)
+    }
   }
 }

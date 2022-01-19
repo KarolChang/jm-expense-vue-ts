@@ -43,6 +43,15 @@ export const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: `${root}/expense`,
+    name: 'Expense',
+    component: () => import('../views/Expense.vue'),
+    meta: {
+      pageTitle: '豬涵記帳',
+      show: true
+    }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('../views/NotFound.vue')

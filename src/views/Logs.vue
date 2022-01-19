@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { showWeekDay } from '../utils/helper'
-import recordAPI from '../apis/expense'
+import recordAPI from '../apis/record'
 import { Log } from '../models/Log'
 import Swal from 'sweetalert2'
 import Spinner from '../components/Spinner.vue'
@@ -12,9 +12,10 @@ const tabs = [
   { title: '編輯', btnColor: 'success' },
   { title: '結算', btnColor: 'danger' }
 ]
-const isLoading = ref(false)
+const isLoading = ref<boolean>(false)
 const logs = ref<Log[]>([])
 const nowTab = ref('總覽')
+const logCount = ref<any>({ 總覽: 5, 新增: 5, 編輯: 5, 結算: 5 })
 
 const filteredLogs = computed(() => {
   if (nowTab.value === '總覽') return logs.value
@@ -55,6 +56,7 @@ const listIconClick = async (recordIds: string | undefined) => {
   })
 }
 
+// created
 fetchLogs()
 </script>
 
@@ -81,7 +83,8 @@ fetchLogs()
         <div class="row h-20 mb-3" v-for="(log, index) in filteredLogs" :key="index">
           <div class="col-2 mt-4">
             <div class="fw-bold">
-              {{ new Date(log.createdAt).toLocaleDateString() + ` (${showWeekDay(log.createdAt)})` }}
+              {{ new Date(log.createdAt).toLocaleDateString() }}
+              <!-- {{ new Date(log.createdAt).toLocaleDateString() + ` (${showWeekDay(log.createdAt)})` }} -->
             </div>
             <div class="fw-bold">{{ new Date(log.createdAt).toLocaleTimeString() }}</div>
           </div>
@@ -138,7 +141,7 @@ fetchLogs()
         </div>
 
         <div class="card-body">
-          <div class="card mb-3" v-for="(log, index) in filteredLogs" :key="index">
+          <div class="card mb-3" v-for="(log, index) in filteredLogs.slice(0, logCount[nowTab])" :key="index">
             <div class="card-header">
               {{
                 new Date(log.createdAt).toLocaleDateString() +
@@ -185,6 +188,16 @@ fetchLogs()
                 </template>
               </div>
             </div>
+          </div>
+          <div class="mt-3">
+            <button
+              v-if="logCount[nowTab] < filteredLogs.length"
+              type="button"
+              class="btn btn-secondary"
+              @click="logCount[nowTab] += 5"
+            >
+              更多紀錄
+            </button>
           </div>
         </div>
       </div>

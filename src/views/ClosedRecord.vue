@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import recordAPI from '../apis/expense'
+import recordAPI from '../apis/record'
 import { Record } from '../models/Record'
 import { showWeekDay } from '../utils/helper'
 import Spinner from '../components/Spinner.vue'
@@ -10,8 +10,8 @@ type SearchMode = '月份' | '日期'
 const isLoading = ref<boolean>(true)
 const records = ref<Record[]>([])
 const searchMode = ref<SearchMode>('月份')
-const year = ref(new Date().getFullYear())
-const month = ref(new Date().getMonth() + 1)
+const year = ref()
+const month = ref()
 const startDate = ref<Date | string>('')
 const finishDate = ref<Date | string>('')
 
@@ -19,7 +19,9 @@ const finishDate = ref<Date | string>('')
 const fetchRecords = async function () {
   try {
     const { data } = await recordAPI.getAll()
-    records.value = data.filter((item: Record) => item.isClosed === true)
+    records.value = data.filter((item: Record) => item.isClosed === true && item.deletedAt === null)
+    year.value = new Date(records.value[0].date).getFullYear()
+    month.value = new Date(records.value[0].date).getMonth() + 1
     isLoading.value = false
   } catch (error) {
     console.error('error', error)

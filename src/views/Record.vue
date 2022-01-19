@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import recordAPI from '../apis/expense'
+import recordAPI from '../apis/record'
 import { Record, RecordInput } from '../models/Record'
 import Swal from 'sweetalert2'
 import { Toast, ConfirmBox } from '../utils/swal'
 import { showWeekDay } from '../utils/helper'
 import Spinner from '../components/Spinner.vue'
+import CreateRecordModalButton from '../components/modalButton/CreateRecordModalButton.vue'
 import { useStore } from '../store/index'
 const store = useStore()
 
@@ -24,110 +25,6 @@ const fetchRecords = async function () {
     isLoading.value = false
   } catch (error) {
     console.error('error', error)
-  }
-}
-
-const createBtnClick = async () => {
-  try {
-    const { value: formValues } = await ConfirmBox.fire({
-      title: '新增資料',
-      html: `
-      <div class="d-flex mb-2">
-        <div class="col-auto me-3">
-          <label for="swal-item" class="col-form-label">項目</label>
-        </div>
-        <div class="col-auto">
-          <input type="text" id="swal-item" class="form-control"/>
-        </div>
-      </div>
-      <div class="d-flex mb-2">
-        <div class="col-auto me-3">
-          <label for="swal-merchant" class="col-form-label">商家</label>
-        </div>
-        <div class="col-auto">
-          <input type="text" id="swal-merchant" class="form-control" >
-        </div>
-      </div>
-      <div class="d-flex mb-2">
-        <div class="col-auto me-3">
-          <label for="swal-amount" class="col-form-label">金額</label>
-        </div>
-        <div class="col-auto">
-          <input type="number" id="swal-amount" class="form-control" >
-        </div>
-      </div>
-      <div class="d-flex mb-2">
-        <div class="col-auto me-3">
-          <label for="swal-date" class="col-form-label">日期</label>
-        </div>
-        <div class="col-auto">
-          <input type="date" id="swal-date" class="form-control" >
-        </div>
-      </div>
-      <div class="d-flex mb-2">
-        <div class="col-auto me-3">
-          <label for="swal-recorder" class="col-form-label">紀錄者</label>
-        </div>
-        <div class="col-auto">
-          <select id="swal-recorder" class="form-select">
-            <option selected>${store.currentUser}</option>
-          </select>
-        </div>
-      </div>
-      `,
-      preConfirm: () => {
-        const item = (document.getElementById('swal-item') as HTMLInputElement).value
-        const merchant = (document.getElementById('swal-merchant') as HTMLInputElement).value
-        const amount = (document.getElementById('swal-amount') as HTMLInputElement).value
-        const date = new Date((document.getElementById('swal-date') as HTMLInputElement).value)
-        const recorder = (document.getElementById('swal-recorder') as HTMLInputElement).value
-        if (!item || !merchant || !amount || !date || !recorder) {
-          Swal.showValidationMessage('所有資料都是必填！若紀錄者為空，請登入~')
-        }
-        return {
-          input: {
-            item,
-            merchant,
-            amount,
-            date,
-            recorder
-          } as RecordInput
-        }
-      }
-    })
-    if (formValues) {
-      createRecord(formValues)
-    }
-  } catch (error) {
-    console.error('error', error)
-  }
-}
-
-const createRecord = async function (formValues: { input: RecordInput }) {
-  try {
-    await recordAPI.create(formValues.input)
-    fetchRecords()
-    Toast.fire({
-      icon: 'success',
-      title: '成功建立資料！'
-    })
-    // line msg
-    // const input = {
-    //   to: [process.env.VUE_APP_JIANMIAU_USERID, process.env.VUE_APP_KAROL_USERID],
-    //   messages: [
-    //     {
-    //       type: 'text',
-    //       text: `${store.currentUser}新增了一筆關於${formValues.input.item}的記帳`
-    //     }
-    //   ]
-    // }
-    // await recordAPI.pushLineMsg(input)
-  } catch (error) {
-    console.error('error', error)
-    Toast.fire({
-      icon: 'error',
-      title: '新增資料失敗！'
-    })
   }
 }
 
@@ -219,6 +116,17 @@ const editRecord = async function (formValues: { id: number; input: RecordInput 
       icon: 'success',
       title: '成功編輯資料！'
     })
+    // lineBot push
+    const input = {
+      to: [process.env.VUE_APP_KAROL_USERID, process.env.VUE_APP_JIANMIAU_USERID],
+      messages: {
+        type: 'text',
+        text: `${store.currentUser + store.icon}編輯了一筆紀錄 →\n${formValues.input.merchant}-${
+          formValues.input.item
+        } $${formValues.input.amount}`
+      }
+    }
+    await recordAPI.pushLineMsg(input)
   } catch (error) {
     console.error('error', error)
     Toast.fire({
@@ -290,6 +198,15 @@ const closeRecord = async (amount: number) => {
         icon: 'success',
         title: '成功結算資料！'
       })
+      // lineBot push
+      const input = {
+        to: [process.env.VUE_APP_KAROL_USERID, process.env.VUE_APP_JIANMIAU_USERID],
+        messages: {
+          type: 'text',
+          text: `${store.currentUser + store.icon}結算紀錄 → 總金額 $${amount}`
+        }
+      }
+      await recordAPI.pushLineMsg(input)
     }
   } catch (error) {
     console.error('error', error)
@@ -305,16 +222,17 @@ fetchRecords()
 </script>
 <template>
   <div v-if="!isLoading">
-    <div class="d-flex justify-content-between mb-3" style="width: 100vw">
-      <button type="button" class="btn btn-primary text-end" @click="createBtnClick">新增資料</button>
-      <div>
-        <template v-if="isCloseStatus">
-          <span class="badge bg-info text-dark me-3 align-middle p-2">結算金額 ${{ closeRecordsAmount }}</span>
-          <button type="button" class="btn btn-secondary" @click="cancelBtnClick">取消結算</button>
-          <button type="button" class="btn btn-success ms-3" @click="toCloseBtnClick">確定結算</button>
-        </template>
-        <button v-else type="button" class="btn btn-danger" @click="closeBtnClick">開始結算</button>
-      </div>
+    <div class="d-flex mb-3" style="width: 100vw">
+      <template v-if="!isCloseStatus">
+        <CreateRecordModalButton view="Record" :refetch="fetchRecords" class="me-3" />
+        <button type="button" class="btn btn-danger" @click="closeBtnClick">開始結算</button>
+      </template>
+
+      <template v-else>
+        <div class="btn btn-info fw-bold">結算金額 ${{ closeRecordsAmount }}</div>
+        <button type="button" class="btn btn-secondary ms-3" @click="cancelBtnClick">取消結算</button>
+        <button type="button" class="btn btn-success ms-3" @click="toCloseBtnClick">確定結算</button>
+      </template>
     </div>
     <table class="table table-striped table-info table-hover" v-if="records.length">
       <thead>
@@ -381,9 +299,8 @@ td {
   white-space: nowrap;
 }
 
-button,
 span {
-  font-size: 0.5em;
+  margin-top: 0.1em;
 }
 
 i[class~='fa-edit']:hover {

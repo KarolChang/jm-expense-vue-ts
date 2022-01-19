@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Navbar from './components/Navbar.vue'
-// import { useStore } from './store/index'
-// const store = useStore()
-// const getRecords = store.fetchRecords
-// getRecords()
+import Navbar from '@/components/Navbar.vue'
+import { onLoad } from './cocos/config'
+
+// created
+onLoad()
 </script>
 
 <template>
@@ -78,5 +78,27 @@ body {
   .fade-fast-leave-active {
     transition: none;
   }
+}
+
+.slide-right-enter-active {
+  transition: transform 0.3s ease-out;
+}
+
+.slide-right-leave-active {
+  transition: transform 0.2s ease-in;
+}
+
+.slide-right-enter-from {
+  transform: translateX(100%);
+}
+.slide-right-enter-to {
+  transform: translateX(0);
+}
+
+.slide-right-leave-from {
+  transform: translateX(0);
+}
+.slide-right-leave-to {
+  transform: translateX(100%);
 }
 </style>

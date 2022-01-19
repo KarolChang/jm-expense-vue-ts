@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import Sidebar from './Sidebar.vue'
+import Sidebar from '@/components/Sidebar.vue'
 import { useRoute } from 'vue-router'
 const route = useRoute()
 
