@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { Toast, ConfirmBox } from '../../utils/swal'
-import expenseAPI from '../../apis/expense'
-import { Category } from '../../models/Category'
+import { inject } from 'vue'
+import { Toast, ConfirmBox } from '@/utils/swal'
+import expenseAPI from '@/apis/expense'
+import { Category } from '@/models'
 
 // props
 const props = defineProps<{
-  refetch: () => {}
   category: Category
 }>()
+
+// inject
+const refetchCategories = inject<() => {}>('refetchCategories')!
 
 // methods
 const btnClick = async () => {
@@ -27,12 +30,14 @@ const btnClick = async () => {
 const deleteCategory = async function (id: number) {
   try {
     const { data } = await expenseAPI.category.delete(id)
-    console.log('data', data)
+    if (data.status !== 'success') {
+      throw new Error(`[SERVER ERROR] ${data.message}`)
+    }
+    refetchCategories()
     Toast.fire({
       icon: 'success',
-      title: `成功刪除類別[${data.deletedCategory.name}]`
+      title: `成功刪除類別[${data.data.name}]`
     })
-    props.refetch()
   } catch (error) {
     console.error('error', error)
     Toast.fire({
@@ -45,3 +50,9 @@ const deleteCategory = async function (id: number) {
 <template>
   <i class="fas fa-trash" @click="btnClick"></i>
 </template>
+<style scoped>
+i:hover {
+  color: rgb(226, 19, 19);
+  cursor: pointer;
+}
+</style>

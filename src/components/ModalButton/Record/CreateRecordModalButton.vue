@@ -1,17 +1,22 @@
 <script setup lang="ts">
+import { inject } from 'vue'
 import Swal from 'sweetalert2'
-import { Toast, ConfirmBox } from '../../utils/swal'
-import recordAPI from '../../apis/record'
-import { RecordInput } from '../../models/Record'
-import { useStore } from '../../store/index'
-const store = useStore()
+import { Toast, ConfirmBox } from '@/utils/swal'
+import recordAPI from '@/apis/record'
+import { pushMsgToBoth } from '@/utils/lineBotMsg'
+import { RecordInput } from '@/models'
+import { CallParent } from '@/cocos/config'
+import { useStore } from '@/store/index'
 import { useRouter } from 'vue-router'
+const store = useStore()
 const router = useRouter()
+
+// inject
+const refetchRecords = inject<() => {}>('refetchRecords')!
 
 // props
 const props = defineProps<{
   view: 'Home' | 'Record'
-  refetch?: () => {}
 }>()
 
 // methods
@@ -52,24 +57,13 @@ const btnClick = async () => {
             <input type="date" id="swal-date" class="form-control" value="${new Date().toJSON().substring(0, 10)}">
           </div>
         </div>
-        <div class="d-flex mb-2">
-          <div class="col-auto me-3">
-            <label for="swal-recorder" class="col-form-label">紀錄者</label>
-          </div>
-          <div class="col-auto">
-            <select id="swal-recorder" class="form-select">
-              <option selected>${store.currentUser}</option>
-            </select>
-          </div>
-        </div>
       `,
       preConfirm: () => {
         const item = (document.getElementById('swal-item') as HTMLInputElement).value
         const merchant = (document.getElementById('swal-merchant') as HTMLInputElement).value
         const amount = (document.getElementById('swal-amount') as HTMLInputElement).value
         const date = new Date((document.getElementById('swal-date') as HTMLInputElement).value)
-        const recorder = (document.getElementById('swal-recorder') as HTMLInputElement).value
-        if (!item || !merchant || !amount || !date || !recorder) {
+        if (!item || !merchant || !amount || !date) {
           Swal.showValidationMessage('所有資料都是必填！若紀錄者為空，請登入~')
         }
         return {
@@ -78,7 +72,7 @@ const btnClick = async () => {
             merchant,
             amount,
             date,
-            recorder
+            UserId: store.currentUser?.id
           } as RecordInput
         }
       }
@@ -99,11 +93,15 @@ const createRecord = async function (formValues: { input: RecordInput }) {
       title: '成功建立資料！'
     })
     if (props.view === 'Record') {
-      props.refetch!()
+      refetchRecords()
     } else {
       router.push({ name: 'Record' })
     }
-    lineBotPush(formValues.input)
+    // lineBot push
+    pushMsgToBoth(
+      `${store.nickName}${store.icon}新增了一筆紀錄 →\n${formValues.input.merchant}-${formValues.input.item} ${formValues.input.amount}`
+    )
+    CallParent('Speak', `成功紀錄${formValues.input.amount}元`)
   } catch (error) {
     console.error('error', error)
     Toast.fire({
@@ -112,26 +110,9 @@ const createRecord = async function (formValues: { input: RecordInput }) {
     })
   }
 }
-
-const lineBotPush = async (recordInput: RecordInput) => {
-  try {
-    const input = {
-      to: [process.env.VUE_APP_KAROL_USERID, process.env.VUE_APP_JIANMIAU_USERID],
-      messages: {
-        type: 'text',
-        text: `${store.currentUser + store.icon}新增了一筆紀錄 →\n${recordInput.merchant}-${recordInput.item} $${
-          recordInput.amount
-        }`
-      }
-    }
-    await recordAPI.pushLineMsg(input)
-  } catch (error) {
-    console.error('error', error)
-  }
-}
 </script>
 <template>
   <div>
-    <button type="button" class="btn btn-primary" @click="btnClick">新增資料</button>
+    <button type="button" class="btn btn-success" @click="btnClick">新增資料</button>
   </div>
 </template>

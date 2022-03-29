@@ -1,16 +1,17 @@
-export type RecorderType = '建喵' | '豬涵'
+// export type RecorderType = '建喵' | '豬涵'
+import { User } from './User'
 
 export class Record {
   id!: number
   date!: Date
-  item?: string
-  merchant?: string
+  item!: string
+  merchant!: string
   amount!: number
-  recorder?: RecorderType
-  isClosed?: boolean
-  deletedAt?: Date | null
+  isClosed!: boolean
+  deletedAt!: Date | null
   createdAt!: Date
   updatedAt!: Date
+  User!: User
 }
 
 export class RecordInput {
@@ -18,6 +19,5 @@ export class RecordInput {
   item!: string
   merchant!: string
   amount!: string
-  recorder?: RecorderType
-  editor?: RecorderType
+  UserId!: number
 }

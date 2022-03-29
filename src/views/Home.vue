@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import recordAPI from '../apis/record'
-import { Record } from '../models/Record'
-import Spinner from '../components/Spinner.vue'
-import CreateRecordModalButton from '../components/modalButton/CreateRecordModalButton.vue'
+import recordAPI from '@/apis/record'
+import lineBotAPI from '@/apis/lineBot'
+import { Record } from '@/models'
+import { CallParent } from '@/cocos/config'
+// components
+import Spinner from '@/components/Spinner.vue'
+import CreateRecordModalButton from '@/components/ModalButton/Record/CreateRecordModalButton.vue'
 
+// class
 class MonthData {
   total!: number
   closedAmount!: number
@@ -21,7 +25,7 @@ const lastMonthData = ref<MonthData>(new MonthData())
 const fetchRecords = async function () {
   try {
     const { data } = await recordAPI.getAll()
-    records.value = data.filter((item: Record) => item.deletedAt === null)
+    records.value = data.data
     // monthData
     const nowYear = new Date().getFullYear()
     const nowMonth = new Date().getMonth() + 1
@@ -67,20 +71,24 @@ fetchRecords()
 
 // 笨蛋才按我
 const handle = async () => {
-  const input = {
-    to: [process.env.VUE_APP_KAROL_USERID, process.env.VUE_APP_JIANMIAU_USERID],
-    messages: { type: 'text', text: '卡比覺得促咪！' }
+  try {
+    const input = {
+      to: [import.meta.env.VITE_KAROL_USERID, import.meta.env.VITE_JIANMIAU_USERID],
+      messages: { type: 'text', text: '卡比覺得促咪！' }
+    }
+    await lineBotAPI.push(input)
+    CallParent('Speak', '按我了 你是笨蛋')
+  } catch (error) {
+    console.error('error', error)
   }
-  console.log('input', input)
-  await recordAPI.pushLineMsg(input)
 }
 </script>
 
 <template>
   <div v-if="!isLoading">
-    <div class="d-flex mb-3">
+    <div class="d-flex mb-3" style="width: 100vw">
       <CreateRecordModalButton view="Home" class="me-3" />
-      <button type="button" class="btn btn-success me-3" @click="handle">笨蛋才按我</button>
+      <button type="button" class="btn btn-danger me-3" @click="handle">笨蛋才按我</button>
     </div>
     <div class="list-group list-group-checkable">
       <label class="list-group-item py-3 mb-3">

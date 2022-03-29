@@ -1,5 +1,5 @@
 import { apiHelper, LineInput } from './helper'
-import { RecordInput } from '../models/Record'
+import { RecordInput } from '@/models'
 
 export default {
   getAll() {
@@ -14,13 +14,13 @@ export default {
   edit(id: number, data: RecordInput) {
     return apiHelper.put(`/record/edit/${id}`, data)
   },
-  close(data: { records: string; totalAmount: number; recorder: string }) {
+  delete(id: number) {
+    return apiHelper.delete(`/record/delete/${id}`)
+  },
+  close(data: { records: string; totalAmount: number; UserId: number }) {
     return apiHelper.put('/close', data)
   },
   getLogs() {
     return apiHelper.get('/log/all')
-  },
-  pushLineMsg(data: LineInput) {
-    return apiHelper.post('/lineBot/push', data)
   }
 }

@@ -1,6 +1,5 @@
 import { apiHelper } from './helper'
-import { ExpenseInput } from '../models/Expense'
-import { CategoryInput } from '../models/Category'
+import { ExpenseInput, CategoryInput } from '@/models'
 
 export default {
   expense: {
@@ -12,6 +11,12 @@ export default {
     },
     create(data: ExpenseInput) {
       return apiHelper.post('/expense/create', data)
+    },
+    edit(id: number, data: ExpenseInput) {
+      return apiHelper.put(`/expense/edit/${id}`, data)
+    },
+    delete(id: number) {
+      return apiHelper.delete(`/expense/delete/${id}`)
     }
   },
   category: {

@@ -1,9 +1,8 @@
-export type RecorderType = '建喵' | '豬涵'
-
-export type ActionType = '新增' | '編輯' | '結算'
+import { User } from './User'
+import { Record } from './Record'
+type ActionType = '新增' | '編輯' | '結算'
 
 export class Log {
-  recorder!: RecorderType
   action!: ActionType
   item?: string
   merchant?: string
@@ -18,4 +17,6 @@ export class Log {
   RecordIds?: string
   createdAt!: Date
   updatedAt!: Date
+  User!: User
+  Records!: Record[]
 }

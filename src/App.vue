@@ -1,25 +1,28 @@
 <script setup lang="ts">
 import Navbar from '@/components/Navbar.vue'
 import { onLoad } from './cocos/config'
+import { useRoute } from 'vue-router'
+const route = useRoute()
 
 // created
-onLoad()
+if (import.meta.env.NODE_ENV === 'production') {
+  onLoad()
+}
 </script>
 
 <template>
-  <div>
-    <Navbar>
-      <template #main>
-        <router-view v-slot="{ Component }">
-          <transition name="fade-fast" mode="out-in">
-            <component :is="Component" />
-          </transition>
-        </router-view>
-      </template>
-    </Navbar>
-  </div>
+  <!-- <div> -->
+  <Navbar>
+    <template #main>
+      <router-view v-slot="{ Component }">
+        <transition name="fade-fast" mode="out-in">
+          <component :is="Component" :key="route.fullPath" />
+        </transition>
+      </router-view>
+    </template>
+  </Navbar>
+  <!-- </div> -->
 </template>
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap');
 
@@ -38,6 +41,19 @@ body {
   text-align: center;
   color: #2c3e50;
   font-family: 'Zen Maru Gothic', sans-serif;
+}
+
+table {
+  display: block;
+  line-height: 25px;
+}
+
+.color-orange {
+  color: coral;
+}
+
+.bg-orange {
+  background-color: coral;
 }
 
 /* transition */
@@ -101,4 +117,11 @@ body {
 .slide-right-leave-to {
   transform: translateX(100%);
 }
+
+th,
+td,
+label {
+  white-space: nowrap;
+}
 </style>
+<!-- <style src="@vueform/multiselect/themes/default.css"></style> -->

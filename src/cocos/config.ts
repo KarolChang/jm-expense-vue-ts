@@ -9,10 +9,10 @@ export const onLoad = async function () {
       URLscheme[strs[i].split('=')[0]] = unescape(strs[i].split('=')[1])
     }
   }
-  CallParent('_alert', '我愛豬涵')
+  // CallParent('_alert', '我愛豬涵')
 }
 
-const CallParent = async function (method: string, ...param: any[]) {
+export const CallParent = async function (method: string, ...param: any[]) {
   const target: string = URLscheme['host']
   if (target) {
     window.parent.postMessage(

@@ -1,54 +1,89 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { routes } from '../router/index'
+import { computed, inject, Ref } from 'vue'
+import router, { routes } from '../router/index'
 import { useRoute, RouteRecordRaw } from 'vue-router'
 import { useStore } from '../store/index'
-import Swal from 'sweetalert2'
-import { ConfirmBox } from '../utils/swal'
+import { Toast } from '@/utils/swal'
+import { getAuth, signOut } from 'firebase/auth'
 const route = useRoute()
 const store = useStore()
-const getUser = store.switchUser
-const emit = defineEmits(['open'])
+const emit = defineEmits(['openUserRP'])
 
+// inject
+const sidebarOpen = inject<Ref<boolean>>('sidebarOpen')!
+
+// computed
 const items = computed(() => {
   return routes.filter((route: RouteRecordRaw) => route.meta?.show)
 })
 
-const changeItem = () => {
-  emit('open', false)
+// methods
+const logout = () => {
+  const auth = getAuth()
+  signOut(auth)
+    .then(() => {
+      store.logout()
+      sidebarOpen.value = false
+      router.push({ name: 'Login' })
+      Toast.fire({
+        icon: 'success',
+        title: '離開豬豬世界囉~'
+      })
+    })
+    .catch((error) => {
+      console.log('error', error)
+    })
 }
 
-const switchModalOpen = async () => {
-  const { value: user } = await ConfirmBox.fire({
-    title: '切換使用者',
-    input: 'select',
-    inputOptions: { 建喵: '建喵', 豬涵: '豬涵' },
-    inputPlaceholder: 'who are you?',
-    showCancelButton: true
-  })
-  if (user) {
-    getUser(user)
-    Swal.fire(`使用者已切換至 [${user}]`)
-  }
+const openUserRP = () => {
+  sidebarOpen.value = false
+  emit('openUserRP', true)
 }
 </script>
 
 <template>
   <div>
-    <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 180px; height: 100vh">
+    <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-primary" style="width: 180px; height: 100vh">
       <router-link
         :to="{ name: 'Home' }"
         class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
       >
-        <span class="fs-4"><i class="fas fa-star"></i> JM記帳 <i class="fas fa-star"></i></span>
+        <div class="fs-4 mx-auto"><i class="fas fa-star"></i> JM記帳 <i class="fas fa-star"></i></div>
       </router-link>
-      <hr />
-      <ul class="nav nav-pills flex-column mb-auto">
+      <hr class="my-1" />
+      <ul class="nav nav-pills mb-auto">
         <li class="nav-item" v-for="(item, index) in items" :key="index">
+          <template v-if="item.children?.length">
+            <button
+              class="nav-link fw-bold text-white"
+              type="button"
+              data-bs-toggle="collapse"
+              :data-bs-target="`#collapse-${index}`"
+              aria-expanded="false"
+              :aria-controls="`#collapse-${index}`"
+            >
+              <span class="me-3">{{ item.meta?.pageTitle }}</span>
+              <i class="fa-solid fa-angle-down"></i>
+            </button>
+
+            <div class="collapse" :id="`collapse-${index}`">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                <li v-for="child in item.children" :key="child.name">
+                  <router-link
+                    :to="{ name: child.name }"
+                    :class="'nav-link fw-bold ' + (child.name === route.name ? 'text-danger' : 'text-white')"
+                    @click="sidebarOpen = false"
+                    >{{ child.meta?.pageTitle }}</router-link
+                  >
+                </li>
+              </ul>
+            </div>
+          </template>
           <router-link
+            v-else
             :to="{ name: item.name }"
-            :class="'nav-link ' + (item.name === route.name ? 'text-info' : 'text-white')"
-            @click="changeItem"
+            :class="'nav-link fw-bold ' + (item.name === route.name ? 'text-danger' : 'text-white')"
+            @click="sidebarOpen = false"
             >{{ item.meta?.pageTitle }}</router-link
           >
         </li>
@@ -63,32 +98,24 @@ const switchModalOpen = async () => {
           aria-expanded="false"
         >
           <img
-            v-if="store.currentUser === '建喵'"
-            src="../assets/jianmiau-login.png"
-            alt=""
-            width="50"
+            :src="store.firebaseUser?.photoURL || '../assets/capoo.gif'"
+            alt="photo"
+            width="55"
             height="55"
             class="rounded-circle me-2"
           />
-          <img
-            v-else-if="store.currentUser === '豬涵'"
-            src="../assets/karol-login.png"
-            alt=""
-            width="50"
-            height="55"
-            class="rounded-circle me-2"
-          />
-          <img v-else src="../assets/capoo.gif" alt="" width="50" height="55" class="rounded-circle me-2" />
-          <strong>{{ store.currentUser ? store.currentUser : '未登入' }}</strong>
+          <strong>{{ store.firebaseUser?.displayName }}</strong>
         </a>
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-          <!-- <li><a class="dropdown-item" href="#">New project...</a></li>
-          <li><a class="dropdown-item" href="#">Settings</a></li>
-          <li><a class="dropdown-item" href="#">Profile</a></li> -->
           <!-- <li><hr class="dropdown-divider" /></li> -->
-          <li><a class="dropdown-item" @click="switchModalOpen">切換帳號</a></li>
+          <li><a class="dropdown-item" @click="openUserRP">個人資料</a></li>
+          <li><a class="dropdown-item" @click="logout">登出</a></li>
+          <!-- <li><a class="dropdown-item" @click="switchModalOpen">切換帳號</a></li> -->
         </ul>
       </div>
     </div>
+    <!-- <transition name="slide-right">
+      <UserRP v-show="userRPOpen" />
+    </transition> -->
   </div>
 </template>
