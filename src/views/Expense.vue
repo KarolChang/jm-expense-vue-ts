@@ -127,7 +127,7 @@ provide('categoriesByType', categoriesByType)
     </div>
     <!-- filter -->
     <div class="d-flex mb-4" style="width: 100%">
-      <div class="mt-4" style="width: 50px">
+      <div class="mt-4" style="width: 100px">
         <label for="type" style="float: left; font-size: 0.7em">TYPE</label>
         <select class="form-select" id="type" aria-label="Default select example" v-model="selectedType">
           <option selected>ALL</option>

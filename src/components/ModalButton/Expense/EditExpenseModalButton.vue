@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, inject, Ref } from 'vue'
-import Swal from 'sweetalert2'
-import { Toast, ConfirmBox } from '@/utils/swal'
+import { Swal, Toast, ConfirmBox } from '@/utils/swal'
 import expenseAPI from '@/apis/expense'
 import { Expense, ExpenseInput, Category } from '@/models'
 import { useStore } from '@/store/index'
@@ -88,19 +87,27 @@ const btnClick = async () => {
         if (!item || !amount || !date) {
           Swal.showValidationMessage('除了[備註]，所有資料都是必填！')
         }
-        return {
-          input: {
-            UserId: store.currentUser?.id,
-            CategoryId: Number(categoryId),
-            item,
-            amount,
-            note,
-            date
-          } as ExpenseInput
+        if (store.currentUser) {
+          return {
+            input: {
+              UserId: store.currentUser.id,
+              CategoryId: Number(categoryId),
+              item,
+              amount,
+              note,
+              date
+            } as ExpenseInput
+          }
+        } else {
+          Toast.fire({
+            icon: 'error',
+            title: '無法取得使用者ID'
+          })
         }
       }
     })
-    if (formValues) {
+    console.log('formValues', formValues)
+    if (formValues?.input) {
       editExpense(formValues)
     }
   } catch (error) {

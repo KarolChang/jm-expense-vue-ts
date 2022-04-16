@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { inject } from 'vue'
-import Swal from 'sweetalert2'
-import { Toast, ConfirmBox } from '@/utils/swal'
+import { Swal, Toast, ConfirmBox } from '@/utils/swal'
 import userAPI from '@/apis/user'
 import { Role, RoleInput } from '@/models'
 

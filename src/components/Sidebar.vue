@@ -114,6 +114,7 @@ const openUserRP = () => {
         </ul>
       </div>
     </div>
+
     <!-- <transition name="slide-right">
       <UserRP v-show="userRPOpen" />
     </transition> -->

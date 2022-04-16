@@ -49,13 +49,13 @@ provide('refetchRoles', fetchRoles)
           <td>{{ role.name }}</td>
           <td>{{ role.name_en }}</td>
           <td>{{ role.deletedAt === null ? 'V' : 'X' }}</td>
-          <td>
+          <!-- <td>
             <router-link :to="{ name: 'Admin-Role-Access', params: { id: role.id } }">
               <i class="fa-solid fa-circle-question"></i
             ></router-link>
             <EditRoleModalButton :role="role" class="ms-2" />
             <DeleteRoleModalButton :role="role" class="ms-2" />
-          </td>
+          </td> -->
         </tr>
       </tbody>
     </table>

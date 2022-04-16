@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Navbar from '@/components/Navbar.vue'
-import { onLoad } from './cocos/config'
+import { onLoad } from '../cocos/config'
 import { useRoute } from 'vue-router'
 const route = useRoute()
 
@@ -11,7 +11,6 @@ if (import.meta.env.NODE_ENV === 'production') {
 </script>
 
 <template>
-  <!-- <div> -->
   <Navbar>
     <template #main>
       <router-view v-slot="{ Component }">
@@ -21,7 +20,6 @@ if (import.meta.env.NODE_ENV === 'production') {
       </router-view>
     </template>
   </Navbar>
-  <!-- </div> -->
 </template>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap');

@@ -4,7 +4,7 @@ export class Category {
   id!: number
   name!: string
   icon!: string
-  // photoUrl?: string
+  photoUrl!: string | null
   type!: CategoryType
   deletedAt!: Date | null
   createdAt!: Date

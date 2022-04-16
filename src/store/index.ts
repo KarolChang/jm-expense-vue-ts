@@ -43,9 +43,9 @@ export const useStore = defineStore('index', {
         console.error('error')
       }
     },
-    login(user: FirebaseUser) {
+    async login(user: FirebaseUser) {
       this.firebaseUser = user
-      this.getCurrentUser(user.email!)
+      await this.getCurrentUser(user.email!)
     },
     logout() {
       this.firebaseUser = null

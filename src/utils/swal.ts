@@ -1,4 +1,5 @@
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2/dist/sweetalert2.js'
+import 'sweetalert2/dist/sweetalert2.css'
 
 export const Toast = Swal.mixin({
   toast: true,
@@ -11,3 +12,5 @@ export const ConfirmBox = Swal.mixin({
   showConfirmButton: true,
   showCancelButton: true
 })
+
+export { Swal }

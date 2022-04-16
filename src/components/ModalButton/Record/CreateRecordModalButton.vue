@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { inject } from 'vue'
-import Swal from 'sweetalert2'
-import { Toast, ConfirmBox } from '@/utils/swal'
+import { Swal, Toast, ConfirmBox } from '@/utils/swal'
 import recordAPI from '@/apis/record'
 import { pushMsgToBoth } from '@/utils/lineBotMsg'
 import { RecordInput } from '@/models'
@@ -66,18 +65,25 @@ const btnClick = async () => {
         if (!item || !merchant || !amount || !date) {
           Swal.showValidationMessage('所有資料都是必填！若紀錄者為空，請登入~')
         }
-        return {
-          input: {
-            item,
-            merchant,
-            amount,
-            date,
-            UserId: store.currentUser?.id
-          } as RecordInput
+        if (store.currentUser) {
+          return {
+            input: {
+              item,
+              merchant,
+              amount,
+              date,
+              UserId: store.currentUser?.id
+            } as RecordInput
+          }
+        } else {
+          Toast.fire({
+            icon: 'error',
+            title: '無法取得使用者ID'
+          })
         }
       }
     })
-    if (formValues) {
+    if (formValues?.input) {
       createRecord(formValues)
     }
   } catch (error) {

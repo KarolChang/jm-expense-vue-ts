@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { inject, computed } from 'vue'
-import Swal from 'sweetalert2'
-import { Toast, ConfirmBox } from '@/utils/swal'
+import { Swal, Toast, ConfirmBox } from '@/utils/swal'
 import userAPI from '@/apis/user'
 import { PermissionInput, ActionTypePermission } from '@/models'
 const actions: ActionTypePermission[] = ['查看', '新增', '編輯', '刪除', '停用', '操作']

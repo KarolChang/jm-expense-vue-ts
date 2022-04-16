@@ -20,7 +20,7 @@ export const getFirebaseUser = () => {
       console.log(`[firebase] onAuthStateChanged`)
       if (user) {
         console.log('[auth] Get Firebase User', user)
-        store.login(user)
+        await store.login(user)
       } else {
         store.logout()
       }

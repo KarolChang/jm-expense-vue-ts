@@ -1,6 +1,6 @@
 // import Vue from 'vue'
 import { createApp } from 'vue'
-import App from '@/App.vue'
+import App from '@/views/App.vue'
 
 function capitalizeFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1)
