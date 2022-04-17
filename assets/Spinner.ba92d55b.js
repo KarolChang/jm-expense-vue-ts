@@ -1,1 +1,0 @@
-import{_ as s}from"./index.05ca804e.js";import{o as _,g as c,A as t,B as a,h as o}from"./vendor.961f4417.js";const n={},r=e=>(t("data-v-3833833e"),e=e(),a(),e),d={class:"spinner"},i=r(()=>o("div",{class:"bouncing-loader"},[o("div"),o("div"),o("div")],-1)),p=[i];function v(e,l){return _(),c("div",d,p)}var f=s(n,[["render",v],["__scopeId","data-v-3833833e"]]);export{f as S};
