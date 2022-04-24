@@ -4,6 +4,7 @@ import recordAPI from '@/apis/record'
 import lineBotAPI from '@/apis/lineBot'
 import { Record } from '@/models'
 import { CallParent } from '@/cocos/config'
+import { useStore } from '../store/index'
 // components
 import Spinner from '@/components/Spinner.vue'
 import CreateRecordModalButton from '@/components/ModalButton/Record/CreateRecordModalButton.vue'
@@ -16,6 +17,7 @@ class MonthData {
 }
 
 // data
+const store = useStore()
 const isLoading = ref<boolean>(true)
 const records = ref<Record[]>([])
 const thisMonthData = ref<MonthData>(new MonthData())
@@ -72,12 +74,25 @@ fetchRecords()
 // 笨蛋才按我
 const handle = async () => {
   try {
-    const input = {
+    const input: any = {
       to: [import.meta.env.VITE_KAROL_USERID, import.meta.env.VITE_JIANMIAU_USERID],
       messages: { type: 'text', text: '卡比覺得促咪！' }
     }
     await lineBotAPI.push(input)
     CallParent('Speak', '按我了 你是笨蛋')
+  } catch (error) {
+    console.error('error', error)
+  }
+}
+
+// 呼叫xx 聽到請回答
+const call = async () => {
+  try {
+    const input: any = {
+      to: [import.meta.env.VITE_KAROL_USERID, import.meta.env.VITE_JIANMIAU_USERID],
+      messages: { type: 'text', text: '呼叫呆喵! 聽到請回答!' }
+    }
+    await lineBotAPI.push(input)
   } catch (error) {
     console.error('error', error)
   }
@@ -89,6 +104,7 @@ const handle = async () => {
     <div class="d-flex mb-3" style="width: 100vw">
       <CreateRecordModalButton view="Home" class="me-3" />
       <button type="button" class="btn btn-danger me-3" @click="handle">笨蛋才按我</button>
+      <button type="button" class="btn btn-primary me-3" @click="call">哈囉</button>
     </div>
     <div class="list-group list-group-checkable">
       <label class="list-group-item py-3 mb-3">

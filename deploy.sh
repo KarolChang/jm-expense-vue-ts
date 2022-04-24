@@ -14,7 +14,7 @@ cd dist
 
 git init
 git add -A
-git commit -m 'deploy: config'
+git commit -m 'deploy: config & view'
 
 # if you are deploying to https://<USERNAME>.github.io
 # git push -f https://github.com/<USERNAME>/<USERNAME>.GitHub.io.git master
