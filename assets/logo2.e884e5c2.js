@@ -1,1 +1,1 @@
-var e="/jm-expense-vue-ts/assets/logo2.c2cebf1e.png";export{e as _};
+var s="/assets/logo2.c2cebf1e.png";export{s as _};
