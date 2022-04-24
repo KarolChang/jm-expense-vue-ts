@@ -98,13 +98,13 @@ const openUserRP = () => {
           aria-expanded="false"
         >
           <img
-            :src="store.firebaseUser?.photoURL || '../assets/capoo.gif'"
+            :src="store.currentUser.photoURL || '../assets/capoo.gif'"
             alt="photo"
             width="55"
             height="55"
             class="rounded-circle me-2"
           />
-          <strong>{{ store.firebaseUser?.displayName }}</strong>
+          <strong>{{ store.currentUser.displayName }}</strong>
         </a>
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
           <!-- <li><hr class="dropdown-divider" /></li> -->

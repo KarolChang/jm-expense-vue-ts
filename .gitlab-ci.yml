@@ -1,0 +1,14 @@
+# image: alpine:latest
+# pages:
+#   stage: deploy
+#   script:
+#     - mkdir public
+#     - ls -al
+#     - mv -f ./assets public
+#     - mv -f ./index.html public
+#     - echo "Release Complete"
+#   artifacts:
+#     paths:
+#       - public
+#   only:
+#     - gh-pages

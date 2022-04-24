@@ -16,6 +16,6 @@ export default defineConfig({
     port: 8080
   },
   // base: import.meta.env.DEV ? '/' : '/jm-expense-vue-ts/'
-  // base: '/jm-expense-vue-ts/'
-  base: './'
+  base: '/jm-expense-vue-ts/'
+  // base: './'
 })
