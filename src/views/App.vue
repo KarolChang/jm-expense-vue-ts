@@ -5,7 +5,7 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 
 // created
-if (import.meta.env.NODE_ENV === 'production') {
+if (import.meta.env.MODE === 'production') {
   onLoad()
 }
 </script>
